@@ -8,6 +8,9 @@ using Android.OS;
 using Android.Util;
 using Android.Graphics;
 using Android.Content.Res;
+using System.Timers;
+using Java.Util;
+using Java.Lang;
 
 namespace UP {
 	[Activity(Label = "UP", MainLauncher = true, Icon = "@drawable/icon")]
@@ -16,16 +19,20 @@ namespace UP {
 		RelativeLayout currentView = null;
 
 		Bitmap[] digitalClockIndicators = new Bitmap[10];
-		UIImage testImgView = null;
 
 		//디지털시계 숫자
 		UIImage DigitalNumber0; UIImage DigitalNumber1; UIImage DigitalNumber2; UIImage DigitalNumber3;
 		UIImage DigitalNumberCol;
 
+		//Main update timer
+		System.Timers.Timer mainUpdTimer;
+
 		protected override void OnCreate(Bundle bundle) {
 			base.OnCreate(bundle);
 			currentView = new RelativeLayout(this); //좌표값으로 객체를 배치하는 레이아웃 방식
 			RequestWindowFeature(WindowFeatures.NoTitle); //제목 표시줄의 삭제
+			Window.AddFlags(WindowManagerFlags.TranslucentStatus); //상태바의 투명화
+			currentView.SetBackgroundColor(Color.Black);
 
 			//Device metris send
 			DisplayMetrics dmetr = new DisplayMetrics();
@@ -57,14 +64,44 @@ namespace UP {
 			currentView.AddView(DigitalNumberCol);
 			currentView.AddView(DigitalNumber0); currentView.AddView(DigitalNumber1); currentView.AddView(DigitalNumber2); currentView.AddView(DigitalNumber3);
 			
-			SetContentView(currentView);
+			SetContentView(currentView); //컨텐츠 뷰를 무엇으로 할지 설정.
+
+			//타이머 설정
+			mainUpdTimer = new System.Timers.Timer(500);
+			mainUpdTimer.Elapsed += Update;
+			mainUpdTimer.AutoReset = true; mainUpdTimer.Enabled = true;
+
 		} //end func
 		
+		//Main update
+		public void Update(object source, ElapsedEventArgs e) {
+
+			//Set time in Main
+			Calendar c = Calendar.Instance;
+			int hours = c.Get(CalendarField.HourOfDay);
+			int minutes = c.Get(CalendarField.Minute);
+			string hoursStr = hours.ToString();
+			string minsStr = minutes.ToString();
+
+			RunOnUiThread( delegate() { //Thread에서 UI를 업데이트하려면 이렇게 블럭 안에서 시도해야함개병맛.
+				DigitalNumber0.Image = hoursStr.Length == 1 ? digitalClockIndicators[0] : digitalClockIndicators[int.Parse(hoursStr[0].ToString())];
+				DigitalNumber1.Image = hoursStr.Length == 1 ? digitalClockIndicators[int.Parse(hoursStr[0].ToString())] : digitalClockIndicators[int.Parse(hoursStr[1].ToString())];
+
+				DigitalNumber2.Image = minsStr.Length == 1 ? digitalClockIndicators[0] : digitalClockIndicators[int.Parse(minsStr[0].ToString())];
+				DigitalNumber3.Image = minsStr.Length == 1 ? digitalClockIndicators[int.Parse(minsStr[0].ToString())] : digitalClockIndicators[int.Parse(minsStr[1].ToString())];
+
+				DigitalNumberCol.Visibility = DigitalNumberCol.Visibility == ViewStates.Visible ? ViewStates.Invisible : ViewStates.Visible;
+			});
+			
+
+		}
+		
+
 		//Element fit to screen 
 		public void fitViewControllerElementsToScreen () {
 
 			//버그로 인해 먼저 이미지 스케일부터 조절
-			DigitalNumberCol.Frame = new CGRect(0, 0, 78.55 * DeviceGeneral.scrRatio, 110 * DeviceGeneral.scrRatio);
+			DigitalNumberCol.Frame = new CGRect(0, 0, 78.55 * DeviceGeneral.maxScrRatio, 110 * DeviceGeneral.maxScrRatio);
 
 			double scrX = DeviceGeneral.scrSize.Width / 2 - (DigitalNumberCol.Width / 2);
 			double digiClockYAxis = 120 * DeviceGeneral.scrRatio;

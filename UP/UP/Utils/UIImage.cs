@@ -6,13 +6,20 @@ using Android.Widget;
 namespace UP {
 	public class UIImage:ImageView {
 
+		private Bitmap currentImageBitmap = null;
+
 		public UIImage(Context context): base(context) {
 			
 		}
 		
 		public Bitmap Image {
 			set {
-				SetImageBitmap(value);
+				if (currentImageBitmap == value) {
+					//같을경우 업데이트 안함
+				} else {
+					currentImageBitmap = value;
+					SetImageBitmap(value);
+				}
 			}
 		} //value.image ~ 식으로 접근 가능하게 만듬. 근데 왜 get는 안되냐. 병맛.
 		public ScaleType Scale {
