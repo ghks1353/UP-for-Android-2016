@@ -1,15 +1,18 @@
 ﻿using Android.Content;
 using Android.Graphics;
 using Android.Util;
+using Android.Views.Animations;
 using Android.Widget;
 
 namespace UP {
 	public class UIImage:ImageView {
 
 		private Bitmap currentImageBitmap = null;
+		private float currentRotation = 0;
 
 		public UIImage(Context context): base(context) {
-			
+				
+
 		}
 		
 		public Bitmap Image {
@@ -27,6 +30,24 @@ namespace UP {
 				SetScaleType(value);
 			}
 		}
+		/*public new float Rotation { //회전 시 사용
+			set {
+				/*if (currentRotation == value) {
+
+				} else {
+					Matrix mtx = new Matrix();
+					mtx.PostRotate(value);
+					Image = Bitmap.CreateBitmap(currentImageBitmap, 0, 0, currentImageBitmap.Width, currentImageBitmap.Height, mtx, true);
+				}
+				//RotateAnimation rotateAnim = new RotateAnimation(0.0f, value, Dimension.RelativeToSelf, 0.5f, Dimension.RelativeToSelf, 0.5f);
+				//rotateAnim.Duration = 0; rotateAnim.FillAfter = true; StartAnimation(rotateAnim);
+				
+
+			}
+			get {
+				return currentRotation;
+			}
+		} */
 
 		//Set frame
 		public CGRect Frame {
@@ -34,6 +55,7 @@ namespace UP {
 				SetX( (int) value.X );
 				SetY( (int) value.Y );
 				LayoutParameters = new RelativeLayout.LayoutParams((int) value.Width, (int) value.Height);
+				value = null; //gc
 			}
 			get {
 				return new CGRect(GetX(), GetY(), LayoutParameters.Width, LayoutParameters.Height );

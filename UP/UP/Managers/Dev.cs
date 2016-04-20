@@ -5,8 +5,8 @@ using Android.Graphics;
 using Android.Util;
 using System;
 
-namespace UP {
-	public class DeviceGeneral {
+namespace UP.Managers {
+	public class Dev { //DeviceGeneral 이며 사용의 간소화를 위해 Dev로 줄임
 		
 		//Handling context
 		static Context currentContext = null;
@@ -32,8 +32,8 @@ namespace UP {
 			deviceDensity = metrics.Density; //Android density
 
 			//화면 사이즈를 얻어옴.
-			//scrSize = new CGRect( 0, 0, ConvertPixelsToDp(metrics.WidthPixels, metrics), ConvertPixelsToDp(metrics.HeightPixels, metrics) );
-			scrSize = new CGRect( 0, 0, metrics.WidthPixels, metrics.HeightPixels );
+			scrSize = new CGRect( 0, 0, ConvertPixelsToDp(metrics.WidthPixels, metrics), ConvertPixelsToDp(metrics.HeightPixels, metrics) );
+			//scrSize = new CGRect( 0, 0, metrics.WidthPixels, metrics.HeightPixels );
 			
 			scrSizeForCalcuate = scrSize;
 
@@ -43,7 +43,7 @@ namespace UP {
 			}
 			scrRatio = scrSizeForCalcuate.Width / workSize.Width;
 
-			Log.Info("Device", "rectsize:" + scrSize.Width.ToString() + ", " + scrSize.Height.ToString() + ", ratio:" + scrRatio.ToString());
+			Log.Info("UP", "rectsize:" + scrSize.Width.ToString() + ", " + scrSize.Height.ToString() + ", ratio:" + scrRatio.ToString());
 
 			//패드에서 거하게 커지는 현상방지
 			maxScrRatio = Math.Min(1, scrRatio);
@@ -59,6 +59,7 @@ namespace UP {
 		}
 
 		public static void changeModalSize() {
+			Log.Info("UP", "Is tablet? => " + isTablet().ToString());
 
 			if (isTablet()) {
 				//패드의 경우, 크기를 미리 지정해줌
@@ -68,7 +69,7 @@ namespace UP {
 				defaultModalSizeRect = new CGRect( 50 * scrRatio, (scrSizeForCalcuate.Height - (480 * scrRatio)) / 2, scrSizeForCalcuate.Width - (100 * scrRatio), 480 * scrRatio );
 			}
 			
-			Log.Info("Device", "Modal size changed to width " + defaultModalSizeRect.Width.ToString() + " height " + defaultModalSizeRect.Height.ToString());
+			Log.Info("UP", "Modal size changed to width " + defaultModalSizeRect.Width.ToString() + " height " + defaultModalSizeRect.Height.ToString());
 		}
 		
 		///// utils
@@ -76,10 +77,15 @@ namespace UP {
 			return (currentContext.Resources.Configuration.ScreenLayout & ScreenLayout.SizeMask)
 				>= ScreenLayout.SizeLarge;
 		}
-
+		
 		private static int ConvertPixelsToDp(float pixelValue, DisplayMetrics metrics ) {
 			var dp = (int) ((pixelValue) / metrics.Density);
 			return dp;
+		}
+		
+		//Convert value with Density
+		public static double CvD(double size) {
+			return size * deviceDensity;
 		}
 		
 

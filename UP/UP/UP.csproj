@@ -32,7 +32,7 @@
     <AndroidLinkSkip />
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
-    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidCreatePackagePerAbi>True</AndroidCreatePackagePerAbi>
     <AndroidSupportedAbis>
     </AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
@@ -53,22 +53,33 @@
   <ItemGroup>
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Debug\UPLog.cs" />
+    <Compile Include="Elements\AlarmElement.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="Managers\UPAlarmManager.cs" />
     <Compile Include="Managers\ImageAssetManager.cs" />
-    <Compile Include="Managers\DeviceGeneral.cs" />
+    <Compile Include="Managers\Dev.cs" />
+    <Compile Include="Managers\UPDataManager.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\UPAlarmService.cs" />
+    <Compile Include="Services\BootReceiver.cs" />
     <Compile Include="Utils\CGRect.cs" />
     <Compile Include="Utils\UIImage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
+    <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
@@ -85,40 +96,64 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\4.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\4.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\5.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\5.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\6.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\6.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\7.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\7.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\8.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\8.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\9.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\9.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\col.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\col.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\0.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\0.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\1.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\1.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\2.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\2.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Numbers\3.png" />
+    <AndroidAsset Include="Assets\Skins\Default\DigitalClock\3.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\values-v21\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\Backgrounds\c_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\Backgrounds\d_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\Backgrounds\a_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\Backgrounds\b_back.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\AnalogClock\time_body.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\AnalogClock\time_hh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\AnalogClock\time_mh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Skins\Default\GroundAssets\ground.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
