@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UP.Elements;
 using Java.Util;
 using Android.Util;
@@ -7,27 +7,29 @@ using UP.Debug;
 
 namespace UP.Managers {
 	public class UPAlarmManager {
+		//* Swiftì—ì„œ ë³€ê²½ì‚¬í•­ì´ ìƒê²¨ì„œ (ì•ŒëŒ repeat ë¶€ë¶„) ì½”ë“œ ì²´í¬í›„ ì „ë¶€ ë°”ê¿”ì•¼í•¨
+		
 		/*
-			LocalNotificationÀ» ÀÌ¿ëÇÑ ¾Ë¶÷ ¼³Á¤ ¹× ÇØÁ¦, ´ÙÀ½ ¾Ë¶÷ ¹İº¹ °ü·Ã Ã³¸®
-			¾Ë¶÷ ¼³Á¤½Ã ¿ùÈ­¼ö¸ñ±İÅäÀÏ ¹İº¹¿¡ ´ëÇÑ Á¤º¸¸¦ userInfo¿¡ ÀúÀåÇÔ.
-			¾Û ½ÇÇà / ¾Ë¶÷ Ãß°¡ / ¼öÁ¤ ½Ã ´ÙÀ½ »çÇ× È®ÀÎ.
-				- ´ÙÀ½ ¹İº¹ÀÌ ÇÊ¿äÇÑÁö Ã¼Å©ÇÔ
-				- ÇÊ¿äÇÑ °æ¿ì ³¯Â¥¸¸ ´õÇØ¼­ (´ÙÀ½ ¾Ë¶÷¿¡ ´ëÇØ¼­¸¸) ¾Ë¶÷À» Àçµî·ÏÇÔ
-				- ¹İº¹ÀÌ ¾øÀ¸¸é ¸®½ºÆ®¿¡ off»óÅÂ·Î µÒ. ¾Ë¶÷µî·ÏÀº ¾ÈÇÔ
-				- ´ÙÀ½³¯ÀÌ ¾Ë¶÷ÀÏÀÌ ¾Æ´ÏÁö¸¸ ¹İº¹Àº ÀÖ´Â°æ¿ì ±× ³¯ÀÌ µ¹¾Æ¿Ã¶§±îÁö ÀÏ¸¸ Ãß°¡ÇÔ
+			LocalNotificationì„ ì´ìš©í•œ ì•ŒëŒ ì„¤ì • ë° í•´ì œ, ë‹¤ìŒ ì•ŒëŒ ë°˜ë³µ ê´€ë ¨ ì²˜ë¦¬
+			ì•ŒëŒ ì„¤ì •ì‹œ ì›”í™”ìˆ˜ëª©ê¸ˆí† ì¼ ë°˜ë³µì— ëŒ€í•œ ì •ë³´ë¥¼ userInfoì— ì €ì¥í•¨.
+			ì•± ì‹¤í–‰ / ì•ŒëŒ ì¶”ê°€ / ìˆ˜ì • ì‹œ ë‹¤ìŒ ì‚¬í•­ í™•ì¸.
+				- ë‹¤ìŒ ë°˜ë³µì´ í•„ìš”í•œì§€ ì²´í¬í•¨
+				- í•„ìš”í•œ ê²½ìš° ë‚ ì§œë§Œ ë”í•´ì„œ (ë‹¤ìŒ ì•ŒëŒì— ëŒ€í•´ì„œë§Œ) ì•ŒëŒì„ ì¬ë“±ë¡í•¨
+				- ë°˜ë³µì´ ì—†ìœ¼ë©´ ë¦¬ìŠ¤íŠ¸ì— offìƒíƒœë¡œ ë‘ . ì•ŒëŒë“±ë¡ì€ ì•ˆí•¨
+				- ë‹¤ìŒë‚ ì´ ì•ŒëŒì¼ì´ ì•„ë‹ˆì§€ë§Œ ë°˜ë³µì€ ìˆëŠ”ê²½ìš° ê·¸ ë‚ ì´ ëŒì•„ì˜¬ë•Œê¹Œì§€ ì¼ë§Œ ì¶”ê°€í•¨
 		*/
 		public static List<AlarmElement> alarmsArray;
-		public static bool isAlarmMergedFirst = false; //Ã¹È¸ merge Ã¼Å©¿ë
-		public static int alarmMaxRegisterCount = 20; //¾Ë¶÷ ÃÖ´ë µî·Ï °¡´É °³¼ö
+		public static bool isAlarmMergedFirst = false; //ì²«íšŒ merge ì²´í¬ìš©
+		public static int alarmMaxRegisterCount = 20; //ì•ŒëŒ ìµœëŒ€ ë“±ë¡ ê°€ëŠ¥ ê°œìˆ˜
 	
-		public static bool alarmRingActivated = false; //¾Ë¶÷ ¾×Æ¼ºñÆ¼.. ¾Æ´Ï ºä°¡ ¶ß°í ÀÖÀ» ¶§ true. (°ÔÀÓ ÁøÇà ÁßÀÏ ¶§.)
+		public static bool alarmRingActivated = false; //ì•ŒëŒ ì•¡í‹°ë¹„í‹°.. ì•„ë‹ˆ ë·°ê°€ ëœ¨ê³  ìˆì„ ë•Œ true. (ê²Œì„ ì§„í–‰ ì¤‘ì¼ ë•Œ.)
 		public static bool alarmSoundPlaying = false;
 
-		// ~~ ¾Ë¶÷ ¿ï¸²°ú ¾Ë¶÷ ²ô±âÀÇ °æ¿ì´Â ´Ù¸¥ °÷¿¡¼­ ±¸ÇöÇÏ°Å³ª ¹æµµ¸¦ Ã£¾Æº¸±â·Î. ~~
+		// ~~ ì•ŒëŒ ìš¸ë¦¼ê³¼ ì•ŒëŒ ë„ê¸°ì˜ ê²½ìš°ëŠ” ë‹¤ë¥¸ ê³³ì—ì„œ êµ¬í˜„í•˜ê±°ë‚˜ ë°©ë„ë¥¼ ì°¾ì•„ë³´ê¸°ë¡œ. ~~
 
-		//¾Ë¶÷ÀÌ ÄÑÁ®ÀÖ´Â °Ô ÀÖÀ» °æ¿ì ´ÙÀ½ ¾Ë¶÷ÀÌ ¿ï¸± ½Ã°¢À» °¡Á®¿È
+		//ì•ŒëŒì´ ì¼œì ¸ìˆëŠ” ê²Œ ìˆì„ ê²½ìš° ë‹¤ìŒ ì•ŒëŒì´ ìš¸ë¦´ ì‹œê°ì„ ê°€ì ¸ì˜´
 		public static int GetNextAlarmFireInSeconds() {
-			//MergeµÈ ÈÄ ½ÇÇàµÇ¾ß ÇÔ
+			//Mergeëœ í›„ ì‹¤í–‰ë˜ì•¼ í•¨
 			if (!isAlarmMergedFirst) {
 				MergeAlarm();
 			} //merge first
@@ -38,21 +40,21 @@ namespace UP.Managers {
 					continue;
 				} //ignores off
 				if (alarmNextFireDate == -1 || alarmNextFireDate > alarmsArray[i].alarmFireDate) {
-					//ÀûÀº ½Ã°£ ¿ì¼±À¸·Î ´ëÀÔ
+					//ì ì€ ì‹œê°„ ìš°ì„ ìœ¼ë¡œ ëŒ€ì…
 					alarmNextFireDate = alarmsArray[i].alarmFireDate;
 				}
 			}
 		
-			return alarmNextFireDate; //-1À» ¸®ÅÏÇÑ °æ¿ì, ÄÑÁ®ÀÖ´Â ¾Ë¶÷ÀÌ ¾øÀ½
+			return alarmNextFireDate; //-1ì„ ë¦¬í„´í•œ ê²½ìš°, ì¼œì ¸ìˆëŠ” ì•ŒëŒì´ ì—†ìŒ
 		} //end func
 
-		//¿ï¸®°í ÀÖ´Â ¾Ë¶÷À» °¡Á®¿È. ¿©·¯°³ÀÎ °æ¿ì, Ã¹¹øÂ° ¾Ë¶÷¸¸ ¸®ÅÏÇÔ
+		//ìš¸ë¦¬ê³  ìˆëŠ” ì•ŒëŒì„ ê°€ì ¸ì˜´. ì—¬ëŸ¬ê°œì¸ ê²½ìš°, ì²«ë²ˆì§¸ ì•ŒëŒë§Œ ë¦¬í„´í•¨
 		public static AlarmElement GetRingingAlarm() {
-			//³ªÁß¿¡ °ÔÀÓ Å¬¸®¾î ÈÄ ¾Ë¶÷À» ²ø ¶§, ¿ï¸®°í ÀÖ´Â ¾Ë¶÷ ÀüÃ¼¸¦ ²ø ¼ö ÀÖ°Ô ÇØ¾ßµÊ
-			//(±×·¸Áö ¾ÊÀ¸¸é ¿ï¸° ¾Ë¶÷¸¸Å­ °ÔÀÓÀ» ±ú¾ßµÊ)
+			//ë‚˜ì¤‘ì— ê²Œì„ í´ë¦¬ì–´ í›„ ì•ŒëŒì„ ëŒ ë•Œ, ìš¸ë¦¬ê³  ìˆëŠ” ì•ŒëŒ ì „ì²´ë¥¼ ëŒ ìˆ˜ ìˆê²Œ í•´ì•¼ë¨
+			//(ê·¸ë ‡ì§€ ì•Šìœ¼ë©´ ìš¸ë¦° ì•ŒëŒë§Œí¼ ê²Œì„ì„ ê¹¨ì•¼ë¨)
 		
-			//¶ÇÇÑ °ÔÀÓ ÁøÇàÁßÀÏ¶© ¾Û ÀÚÃ¼¿¡ °ÔÀÓ ÁøÇàÁßÀÌ¶ó´Â Ã¼Å©°¡ ÇÊ¿äÇÏ¸ç ±×·¸Áö ¾ÊÀ» °æ¿ì
-			//°ÔÀÓÇÏ´Ù°¡ ¹ÛÀ¸·Î ³ª°¬´Ù¿Ô´Âµ¥ ¾Ë¶÷ ¿ï¸²È­¸éÀ¸·Î ´Ù½Ã..
+			//ë˜í•œ ê²Œì„ ì§„í–‰ì¤‘ì¼ë• ì•± ìì²´ì— ê²Œì„ ì§„í–‰ì¤‘ì´ë¼ëŠ” ì²´í¬ê°€ í•„ìš”í•˜ë©° ê·¸ë ‡ì§€ ì•Šì„ ê²½ìš°
+			//ê²Œì„í•˜ë‹¤ê°€ ë°–ìœ¼ë¡œ ë‚˜ê°”ë‹¤ì™”ëŠ”ë° ì•ŒëŒ ìš¸ë¦¼í™”ë©´ìœ¼ë¡œ ë‹¤ì‹œ..
 			int currentDateInMilliSeconds = (int) Calendar.Instance.TimeInMillis;
 			for (int i = 0; i < alarmsArray.Count; ++i) { 
 				if (alarmsArray[i].alarmToggle == false) {
@@ -61,23 +63,23 @@ namespace UP.Managers {
 			
 				if (alarmsArray[i].alarmFireDate <= currentDateInMilliSeconds
 					&& alarmsArray[i].alarmCleared == false) {
-					/*  1. firedµÈ ¾Ë¶÷ÀÏ ¶§.
-						2. Å¬¸®¾î¸¦ ¸øÇßÀ» ¶§.
-						3. toggledµÈ ¾Ë¶÷ÀÏ ¶§. */
+					/*  1. firedëœ ì•ŒëŒì¼ ë•Œ.
+						2. í´ë¦¬ì–´ë¥¼ ëª»í–ˆì„ ë•Œ.
+						3. toggledëœ ì•ŒëŒì¼ ë•Œ. */
 						return alarmsArray[i];
 				}
 			} //end for
 			
-			return null; //Element ¾øÀ½
+			return null; //Element ì—†ìŒ
 		}
 
-		//¾Ë¶÷ °ÔÀÓ Å¬¸®¾î Åä±Û
+		//ì•ŒëŒ ê²Œì„ í´ë¦¬ì–´ í† ê¸€
 		public static void GameClearToggleAlarm( int alarmID, bool cleared ) {
 			AlarmElement modAlarmElement = GetAlarm(alarmID);
 			modAlarmElement.alarmCleared = cleared;
 		
 			//save it
-			//TODO 20160421 µ¥ÀÌÅÍ ÀúÀå
+			//TODO 20160421 ë°ì´í„° ì €ì¥
 			UPDataManager.SaveDataJObject(UPDataManager.KEY_ALARMS, JsonConvert.SerializeObject(alarmsArray, Formatting.Indented));
 
 			Log.Debug(UPLog.TAG, "Alarm clear toggle to ... " + cleared.ToString() + " to id " + alarmID.ToString());
@@ -95,29 +97,29 @@ namespace UP.Managers {
 		}
 
 		public static void MergeAlarm() {
-			//½ºÄÉÁÙµÈ ¾Ë¶÷µé °¡Á®¿Í¼­ Áö³­°Íµé mergeÇÏ°í, ¹ß»ıÇÒ ¼ö ÀÖ´Â ¿À·ù¿¡ ´ëÇØ¼­ Ã¼Å©ÇÔ
+			//ìŠ¤ì¼€ì¤„ëœ ì•ŒëŒë“¤ ê°€ì ¸ì™€ì„œ ì§€ë‚œê²ƒë“¤ mergeí•˜ê³ , ë°œìƒí•  ìˆ˜ ìˆëŠ” ì˜¤ë¥˜ì— ëŒ€í•´ì„œ ì²´í¬í•¨
 			
 			int currentTime = (int) Calendar.Instance.TimeInMillis;
 			int todayWeekday = Calendar.Instance.Get(CalendarField.DayOfWeek);
 
 			Log.Debug(UPLog.TAG, "TODAY WEEKDAY IS " + todayWeekday.ToString());
 
-			//TODO: ÀúÀåµÈ ¾Ë¶÷ÀÌ ÇÏ³ªµµ ¾øÀ» °æ¿ì, ÀúÀåÀ» ÇÒ ¼ö ÀÖ´Â key¸¦ ¸¸µé°í ºó ¹è¿­À» ³Ö¾îÁØ´Ù.
-			//ÀÖÀ» °æ¿ì, ¹è¿­ alarmsArray¿¡ ¹Ş¾Æ¿Â´Ù.
+			//TODO: ì €ì¥ëœ ì•ŒëŒì´ í•˜ë‚˜ë„ ì—†ì„ ê²½ìš°, ì €ì¥ì„ í•  ìˆ˜ ìˆëŠ” keyë¥¼ ë§Œë“¤ê³  ë¹ˆ ë°°ì—´ì„ ë„£ì–´ì¤€ë‹¤.
+			//ìˆì„ ê²½ìš°, ë°°ì—´ alarmsArrayì— ë°›ì•„ì˜¨ë‹¤.
 
 			string loadedAlarmsArr = UPDataManager.LoadDataJObject( UPDataManager.KEY_ALARMS );
 			alarmsArray = loadedAlarmsArr == "" ? new List<AlarmElement>() : JsonConvert.DeserializeObject<List<AlarmElement>>( loadedAlarmsArr );
 			
 			//UPDataManager.SaveDataJObject(UPDataManager.KEY_ALARMS, JsonConvert.SerializeObject(alarmsArray, Formatting.Indented));
 			
-			//NotificationÀÇ ±¸ÇöÀº ¾Èµå·ÎÀÌµå¿¡¼­ ÇÊ¿ä ¾øÀ¸¹Ç·Î Á¦¿ÜÇÔ
+			//Notificationì˜ êµ¬í˜„ì€ ì•ˆë“œë¡œì´ë“œì—ì„œ í•„ìš” ì—†ìœ¼ë¯€ë¡œ ì œì™¸í•¨
 
 			Log.Debug(UPLog.TAG, "Scheduled alarm count" + alarmsArray.Count.ToString());
 			for (int i = 0; i < alarmsArray.Count; ++i) { 
-				//TODO: »ç¿îµå°¡ ¾ø´Â °Í¿¡ ÇÑÇØ ±× »ç¿îµå¸¦ ±âº»ÄÄÆ÷³ÍÆ®·Î ¹Ù²ã¾ßÇÔ
-				//ÇÏÁö¸¸ ¾ÆÁ÷ »ç¿îµå¸Å´ÏÀú°¡ ±¸ÇöµÇÁö ¾Ê¾ÒÀ¸¹Ç·Î, ÀÏ´ÜÀº »ı·«. 20160421. ÀÛ¾÷ÈÄ todo »èÁ¦¹Ù¶÷
+				//TODO: ì‚¬ìš´ë“œê°€ ì—†ëŠ” ê²ƒì— í•œí•´ ê·¸ ì‚¬ìš´ë“œë¥¼ ê¸°ë³¸ì»´í¬ë„ŒíŠ¸ë¡œ ë°”ê¿”ì•¼í•¨
+				//í•˜ì§€ë§Œ ì•„ì§ ì‚¬ìš´ë“œë§¤ë‹ˆì €ê°€ êµ¬í˜„ë˜ì§€ ì•Šì•˜ìœ¼ë¯€ë¡œ, ì¼ë‹¨ì€ ìƒëµ. 20160421. ì‘ì—…í›„ todo ì‚­ì œë°”ëŒ
 				
-				//ÀÌ ´ÙÀ½Àº, Toggle onµÈ°Í ´ë»óÀ¸·Î¸¸ °Ë»ç
+				//ì´ ë‹¤ìŒì€, Toggle onëœê²ƒ ëŒ€ìƒìœ¼ë¡œë§Œ ê²€ì‚¬
 				if (alarmsArray[i].alarmToggle == false) {
 					Log.Debug(UPLog.TAG, "Scheduled alarm" + alarmsArray[i].alarmID.ToString() + " state off. skipping");
 					continue;
@@ -125,36 +127,36 @@ namespace UP.Managers {
 				Log.Debug(UPLog.TAG, "alarm id " + alarmsArray[i].alarmID.ToString() + " firedate (millisec)" + alarmsArray[i].alarmFireDate);
 
 				if (alarmsArray[i].alarmFireDate <= currentTime
-					&& alarmsArray[i].alarmCleared == true ) { /* ½Ã°£ÀÌ Áö³µ¾îµµ, °ÔÀÓÀ» Å¬¸®¾î ÇØ¾ßµÊ. °ÔÀÓ Å¬¸®¾î½Ã true·Î ¼³Á¤ÈÄ merge ÇÑ¹ø´õ ÇÏ¸éµÊ */
+					&& alarmsArray[i].alarmCleared == true ) { /* ì‹œê°„ì´ ì§€ë‚¬ì–´ë„, ê²Œì„ì„ í´ë¦¬ì–´ í•´ì•¼ë¨. ê²Œì„ í´ë¦¬ì–´ì‹œ trueë¡œ ì„¤ì •í›„ merge í•œë²ˆë” í•˜ë©´ë¨ */
 					Log.Debug(UPLog.TAG, "Merge start " + alarmsArray[i].alarmID.ToString());
-					//Repeat ´ë»óÀÌ ÀÖ´ÂÁö Ã¼Å©
+					//Repeat ëŒ€ìƒì´ ìˆëŠ”ì§€ ì²´í¬
 
-					//1. ¿À´ÃÀÇ ¿äÀÏÀ» ¾ò¾î¿È. 2. ´ÙÀ½ ³¯Â¥ ¾Ë¶÷ Ã¼Å©. 3. ³¯Â¥¸¸Å­ ´õÇÔ.
-					//´Ü, ¿À´Ã³¯Â¥°¡ ¾Æ´Ï¶ó ´ÙÀ½³¯Â¥·Î °è»êÇØ¾ßÇÔ. (¿Ö³Ä¸é ¿À´ÃÀº ¿ï·ÈÀ¸´Ï±ñ.)
+					//1. ì˜¤ëŠ˜ì˜ ìš”ì¼ì„ ì–»ì–´ì˜´. 2. ë‹¤ìŒ ë‚ ì§œ ì•ŒëŒ ì²´í¬. 3. ë‚ ì§œë§Œí¼ ë”í•¨.
+					//ë‹¨, ì˜¤ëŠ˜ë‚ ì§œê°€ ì•„ë‹ˆë¼ ë‹¤ìŒë‚ ì§œë¡œ ê³„ì‚°í•´ì•¼í•¨. (ì™œëƒë©´ ì˜¤ëŠ˜ì€ ìš¸ë ¸ìœ¼ë‹ˆê¹.)
 					int nextAlarmVaild = -1;
-					for (int k = ( todayWeekday == 7 ? 0 : todayWeekday /* ´ÙÀ½³¯Â¥ºÎÅÍ */ ); k < alarmsArray[i].alarmRepeat.Length; ++k) {
-						//¸¶Áö¸·(Åä¿äÀÏ)¿¡´Â ´ÙÀ½ÁÖ Ã¼Å©
+					for (int k = ( todayWeekday == 7 ? 0 : todayWeekday /* ë‹¤ìŒë‚ ì§œë¶€í„° */ ); k < alarmsArray[i].alarmRepeat.Length; ++k) {
+						//ë§ˆì§€ë§‰(í† ìš”ì¼)ì—ëŠ” ë‹¤ìŒì£¼ ì²´í¬
 						nextAlarmVaild = alarmsArray[i].alarmRepeat[k] == true ? k : nextAlarmVaild;
 						if (alarmsArray[i].alarmRepeat[k] == true) { break; }
 					}
-					if (todayWeekday != 7 && nextAlarmVaild == -1) { //Ã£À» ¼ö ¾ø´Â°æ¿ì ¾Õ¿¡¼­ºÎÅÍ ´Ù½Ã °Ë»ö
-						//Åä¿äÀÏÀ» ¹èÁ¦ÇÏ´Â ÀÌÀ¯: Åä¿äÀÏÀº ÀÌ¹Ì ÀÏ¿äÀÏºÎÅÍ ´Ù½Ã µ¹±â ¶§¹®.
+					if (todayWeekday != 7 && nextAlarmVaild == -1) { //ì°¾ì„ ìˆ˜ ì—†ëŠ”ê²½ìš° ì•ì—ì„œë¶€í„° ë‹¤ì‹œ ê²€ìƒ‰
+						//í† ìš”ì¼ì„ ë°°ì œí•˜ëŠ” ì´ìœ : í† ìš”ì¼ì€ ì´ë¯¸ ì¼ìš”ì¼ë¶€í„° ë‹¤ì‹œ ëŒê¸° ë•Œë¬¸.
 						for (int k = 0; k < alarmsArray[i].alarmRepeat.Length; ++k) {
 							nextAlarmVaild = alarmsArray[i].alarmRepeat[k] == true ? k : nextAlarmVaild;
 							if (alarmsArray[i].alarmRepeat[k] == true) { break; }
 						}
 					}
 					Log.Debug(UPLog.TAG, "Next alarm day (0=sunday) " + nextAlarmVaild.ToString());
-					alarmsArray[i].alarmCleared = false; // °ÔÀÓÅ¬¸®¾î ¸®¼Â
+					alarmsArray[i].alarmCleared = false; // ê²Œì„í´ë¦¬ì–´ ë¦¬ì…‹
 					
 					//2
-					//´ÙÀ½ ¾Ë¶÷ ³¯Â¥¿¡ ¾Ë¶÷ Ãß°¡. (¸îÀÏ Â÷ÀÌ³ª´ÂÁö ±¸ÇØ¼­ day¸¸ ´õÇØÁÖ¸éµÊ. ¾øÀ¸¸é Ãß°¡¾ÈÇÏ°í Åä±ÛÁ¾·á)
+					//ë‹¤ìŒ ì•ŒëŒ ë‚ ì§œì— ì•ŒëŒ ì¶”ê°€. (ëª‡ì¼ ì°¨ì´ë‚˜ëŠ”ì§€ êµ¬í•´ì„œ dayë§Œ ë”í•´ì£¼ë©´ë¨. ì—†ìœ¼ë©´ ì¶”ê°€ì•ˆí•˜ê³  í† ê¸€ì¢…ë£Œ)
 					if (nextAlarmVaild == -1) {
-						//¹İº¹ ¾ø´Â °æ¿ì ¾Ë¶÷ Åä±Û Á¾·á
+						//ë°˜ë³µ ì—†ëŠ” ê²½ìš° ì•ŒëŒ í† ê¸€ ì¢…ë£Œ
 						alarmsArray[i].alarmToggle = false;
 						Log.Debug(UPLog.TAG, "Alarm toggle finished (no-repeat alarm)");
 					} else {
-						//¹İº¹ÀÎ °æ¿ì ´ÙÀ½ ¹İº¹ÀÏ °è»ê
+						//ë°˜ë³µì¸ ê²½ìš° ë‹¤ìŒ ë°˜ë³µì¼ ê³„ì‚°
 						Log.Debug(UPLog.TAG, "Alarm toggle will repeat");
 						int fireAfterDay = 0;
 						if (nextAlarmVaild - (todayWeekday - 1) > 0) {
@@ -170,7 +172,7 @@ namespace UP.Managers {
 						tmpC.Add(CalendarField.Date, fireAfterDay);
 						alarmsArray[i].alarmFireDate = (int) tmpC.TimeInMillis; //add result
 					
-						//LocalNotifi´Â ¾Èµå·ÎÀÌµå¿¡¼­ ÇÊ¿ä°¡ ¾øÀ¸´Ï °ú°¨ÇÏ°Ô »ı·«
+						//LocalNotifiëŠ” ì•ˆë“œë¡œì´ë“œì—ì„œ í•„ìš”ê°€ ì—†ìœ¼ë‹ˆ ê³¼ê°í•˜ê²Œ ìƒëµ
 
 						//add new push for next alarm
 						Log.Debug(UPLog.TAG, "Alarm added successfully.");
@@ -179,7 +181,7 @@ namespace UP.Managers {
 				
 				//alarm merge check if end
 				} else {
-					//¾Ë¶÷ÀÌ ÄÑÁ®ÀÖÁö¸¸, ½Ã°£ÀÌ Áö³ªÁö ¾Ê¾Ò°Å³ª °ÔÀÓÀ» Å¬¸®¾îÇÏÁö ¾ÊÀº °æ¿ì
+					//ì•ŒëŒì´ ì¼œì ¸ìˆì§€ë§Œ, ì‹œê°„ì´ ì§€ë‚˜ì§€ ì•Šì•˜ê±°ë‚˜ ê²Œì„ì„ í´ë¦¬ì–´í•˜ì§€ ì•Šì€ ê²½ìš°
 					Log.Debug(UPLog.TAG, "Alarm is on but not cleared (or not passed), id" + alarmsArray[i].alarmID.ToString() );
 				
 				}
@@ -187,12 +189,12 @@ namespace UP.Managers {
 			} //for end
 			Log.Debug(UPLog.TAG, "Merge is done. time to save!");
 
-			//todo 20160421 ÀúÀåÇØ¾ßÇÔ
+			//todo 20160421 ì €ì¥í•´ì•¼í•¨
 			UPDataManager.SaveDataJObject(UPDataManager.KEY_ALARMS, JsonConvert.SerializeObject(alarmsArray, Formatting.Indented));
 			
-			//Badge Ç¥½Ã¿ë
+			//Badge í‘œì‹œìš©
 			
-			//¾Èµå·ÎÀÌµåµµ ¹îÁö¸¦ Áö¿øÇÏ±ä ÇÏÁö¸¸, ÀÌ°Ô ·±Ã³¸¶´Ù ´Ù¸¥µ¥´Ù Æ¯º° ÇÃ·¡±×¸¦ ³Ö¾îÁà¾ß ÇÏ´Â ºÎºĞÀÌ ÀÖ¾î º¸·ù
+			//ì•ˆë“œë¡œì´ë“œë„ ë±ƒì§€ë¥¼ ì§€ì›í•˜ê¸´ í•˜ì§€ë§Œ, ì´ê²Œ ëŸ°ì²˜ë§ˆë‹¤ ë‹¤ë¥¸ë°ë‹¤ íŠ¹ë³„ í”Œë˜ê·¸ë¥¼ ë„£ì–´ì¤˜ì•¼ í•˜ëŠ” ë¶€ë¶„ì´ ìˆì–´ ë³´ë¥˜
 		
 			isAlarmMergedFirst = true;
 		} //merge end
@@ -218,8 +220,8 @@ namespace UP.Managers {
 
 		//Toggle alarm (on/off)
 		public static void ToggleAlarm(int alarmID, bool alarmStatus, bool isListOn = false) {
-			//- ¾Ë¶÷ÀÌ ÄÑÁ®ÀÖ´Â »óÅÂ¿¡¼­ ²ø °æ¿ì, LocalNotificationµµ °°ÀÌ Á¾·á
-			//- ¾Ë¶÷ÀÌ ²¨Á®ÀÖ´Â »óÅÂ¿¡¼­ Å³ °æ¿ì, »óÈ²¿¡ µû¶ó (¹İº¹Ã¼Å©ÈÄ) LocalNotification Ãß°¡
+			//- ì•ŒëŒì´ ì¼œì ¸ìˆëŠ” ìƒíƒœì—ì„œ ëŒ ê²½ìš°, LocalNotificationë„ ê°™ì´ ì¢…ë£Œ
+			//- ì•ŒëŒì´ êº¼ì ¸ìˆëŠ” ìƒíƒœì—ì„œ í‚¬ ê²½ìš°, ìƒí™©ì— ë”°ë¼ (ë°˜ë³µì²´í¬í›„) LocalNotification ì¶”ê°€
 			if (!isAlarmMergedFirst) {
 				MergeAlarm();
 			} //merge first
@@ -230,15 +232,15 @@ namespace UP.Managers {
 
 					if (alarmsArray[i].alarmToggle == alarmStatus) {
 						Log.Debug(UPLog.TAG, "status already same..!!");
-						break; //»óÅÂ°¡ °°À¸¹Ç·Î º¯°æÇÒ ÇÊ¿ä ¾øÀ½
+						break; //ìƒíƒœê°€ ê°™ìœ¼ë¯€ë¡œ ë³€ê²½í•  í•„ìš” ì—†ìŒ
 					}
 					
-					//Notifi ±¸Çö ÇÊ¿ä ¾øÀ½
+					//Notifi êµ¬í˜„ í•„ìš” ì—†ìŒ
 
-					if (alarmStatus == false) { //¾Ë¶÷ ²ô±â
+					if (alarmStatus == false) { //ì•ŒëŒ ë„ê¸°
 						alarmsArray[i].alarmToggle = false; //alarm toggle to off.
 					} else {
-						//¾Ë¶÷ ÄÑ±â (addalarm ÀçÅÁ)
+						//ì•ŒëŒ ì¼œê¸° (addalarm ì¬íƒ•)
 						Calendar tmpC = Calendar.Instance;
 						Calendar oldC = Calendar.Instance; oldC.TimeInMillis = alarmsArray[i].alarmFireDate;
 						tmpC.Set(CalendarField.Hour, oldC.Get(CalendarField.Hour)); //move hour and min from old date
@@ -255,17 +257,17 @@ namespace UP.Managers {
 							alarmsArrTmpPointer.alarmRepeat, i, alarmsArrTmpPointer.alarmID,
 							!isListOn);
 					
-						//return; //ÇÑ¹ø´õ ÀúÀåÇØ¾ßµÊ.
+						//return; //í•œë²ˆë” ì €ì¥í•´ì•¼ë¨.
 						break; //save
 					} //end status
-					break; //ÇØ´ç ID¸¦ Ã³¸®ÇßÀ¸¹Ç·Î ´ÙÀ½ºÎÅÍÀÇ ·çÇÁ´Â ¹«ÀÇ¹Ì
+					break; //í•´ë‹¹ IDë¥¼ ì²˜ë¦¬í–ˆìœ¼ë¯€ë¡œ ë‹¤ìŒë¶€í„°ì˜ ë£¨í”„ëŠ” ë¬´ì˜ë¯¸
 				} //end alarmid target search
 			} //end for
 		
 			//save it
 			Log.Debug(UPLog.TAG, "Status change saving");
 
-			//TODO: ½Ã½ºÅÛ ÀúÀå
+			//TODO: ì‹œìŠ¤í…œ ì €ì¥
 			UPDataManager.SaveDataJObject(UPDataManager.KEY_ALARMS, JsonConvert.SerializeObject(alarmsArray, Formatting.Indented));
 		} //end func
 
@@ -275,7 +277,7 @@ namespace UP.Managers {
 				MergeAlarm();
 			} //merge first
 		
-			//½Ã½ºÅÛ ³ëÆ¼ÇÇ ÇÊ¿ä¾øÀ¸¹Ç·Î Æ÷ÆÃ »ı·«
+			//ì‹œìŠ¤í…œ ë…¸í‹°í”¼ í•„ìš”ì—†ìœ¼ë¯€ë¡œ í¬íŒ… ìƒëµ
 			
 			for (int i = 0; i < alarmsArray.Count; ++i) {
 				if (alarmsArray[i].alarmID == alarmID) {
@@ -287,7 +289,7 @@ namespace UP.Managers {
 			//save it
 			Log.Debug(UPLog.TAG, "Alarm removed from system. saving");
 
-			//TODO: ½Ã½ºÅÛ¿¡ ÀúÀå
+			//TODO: ì‹œìŠ¤í…œì— ì €ì¥
 			UPDataManager.SaveDataJObject(UPDataManager.KEY_ALARMS, JsonConvert.SerializeObject(alarmsArray, Formatting.Indented));
 		}
 
@@ -302,7 +304,7 @@ namespace UP.Managers {
 		
 			int alarmArrayIndex = 0;
 			
-			//Notification ¼öÁ¤ ÄÚµå°¡ ÀÖ¾úÁö¸¸ ÀÌ°Í ¿ª½Ã ¾Èµå·ÎÀÌµå¿¡¼± ¹«¾µ¸ğ
+			//Notification ìˆ˜ì • ì½”ë“œê°€ ìˆì—ˆì§€ë§Œ ì´ê²ƒ ì—­ì‹œ ì•ˆë“œë¡œì´ë“œì—ì„  ë¬´ì“¸ëª¨
 
 			for (int i = 0; i < alarmsArray.Count; ++i) {
 				if (alarmsArray[i].alarmID == alarmID) {
@@ -323,7 +325,7 @@ namespace UP.Managers {
 		//Add alarm to system
 		public static void AddAlarm(int funcDate, string funcAlarmTitle, int gameID, string soundFile, bool[] repeatArr,
 			int insertAt = -1, int alarmID = -1, bool isToggled = true, bool redrawList = true) {
-			//repeatarr¿¡ ÀÏ,¿ù,È­,¼ö,¸ñ,±İ,Åä ¼øÀ¸·Î Ã¤¿ò
+			//repeatarrì— ì¼,ì›”,í™”,ìˆ˜,ëª©,ê¸ˆ,í†  ìˆœìœ¼ë¡œ ì±„ì›€
 		
 			Calendar date =  Calendar.Instance;
 			date.TimeInMillis = funcDate;
@@ -331,11 +333,11 @@ namespace UP.Managers {
 			string alarmTitle = funcAlarmTitle;
 			int currentDayOfWeek = date.Get(CalendarField.DayOfWeek);
 
-			if(alarmTitle == "") { //¾Ë¶÷ Å¸ÀÌÆ²ÀÌ ¾øÀ¸¸é ¼Ò¸®¸¸ ¿ï¸®´Â »óÈ²ÀÌ ¹ß»ıÇÏ¹Ç·Î ±âº» ÀÌ¸§ ¼³Á¤
-				alarmTitle = "¾Ë¶÷";
+			if(alarmTitle == "") { //ì•ŒëŒ íƒ€ì´í‹€ì´ ì—†ìœ¼ë©´ ì†Œë¦¬ë§Œ ìš¸ë¦¬ëŠ” ìƒí™©ì´ ë°œìƒí•˜ë¯€ë¡œ ê¸°ë³¸ ì´ë¦„ ì„¤ì •
+				alarmTitle = "ì•ŒëŒ";
 			}
 			
-			int fireOnce = -1; /* ¹İº¹¿äÀÏ ¼³Á¤ÀÌ ¾ø´Â°æ¿ì 1È¸¼ºÀ¸·Î ÆÇ´ÜÇÏ°í date º¯È­ ¾øÀ½) */
+			int fireOnce = -1; /* ë°˜ë³µìš”ì¼ ì„¤ì •ì´ ì—†ëŠ”ê²½ìš° 1íšŒì„±ìœ¼ë¡œ íŒë‹¨í•˜ê³  date ë³€í™” ì—†ìŒ) */
 			bool fireSearched = false;
 			for (int i = 0; i < repeatArr.Length; ++i) {
 				if (repeatArr[i] == true) {
@@ -343,14 +345,14 @@ namespace UP.Managers {
 				}
 			}
 
-			if (fireOnce != -1) { //¿©·¯¹ø ¿ï·Á¾ß ÇÏ´Â °æ¿ì ¿À´ÃÀ» Æ÷ÇÔÇØ¼­ ´ÙÀ½ fireDate±îÁö¸¸ ´õÇÔ
+			if (fireOnce != -1) { //ì—¬ëŸ¬ë²ˆ ìš¸ë ¤ì•¼ í•˜ëŠ” ê²½ìš° ì˜¤ëŠ˜ì„ í¬í•¨í•´ì„œ ë‹¤ìŒ fireDateê¹Œì§€ë§Œ ë”í•¨
 				Log.Debug(UPLog.TAG, "TODAY OF WEEK =>" + currentDayOfWeek.ToString());
-				//ÀÏ¿äÀÏÀÌ 0ºÎÅÍ ½ÃÀÛÇÏ´ÂÁö 1ºÎÅÍ ½ÃÀÛÇÏ´ÂÁö È®ÀÎÇÒ ÇÊ¿ä°¡ ÀÖÀ½. 1ºÎÅÍ ½ÃÀÛÇÏ¸é DayOfWeek È®ÀÎÀ» 6À¸·Î ÇØ¾ßÇÔ
+				//ì¼ìš”ì¼ì´ 0ë¶€í„° ì‹œì‘í•˜ëŠ”ì§€ 1ë¶€í„° ì‹œì‘í•˜ëŠ”ì§€ í™•ì¸í•  í•„ìš”ê°€ ìˆìŒ. 1ë¶€í„° ì‹œì‘í•˜ë©´ DayOfWeek í™•ì¸ì„ 6ìœ¼ë¡œ í•´ì•¼í•¨
 				for (int i = 0; i < (currentDayOfWeek == 7 ? 0 : currentDayOfWeek); ++i ) {
 					if (repeatArr[i] == true) {
 						fireOnce = i; fireSearched = true; break;
 					}
-				} //¾øÀ»°æ¿ì ´ÙÀ½ÁÖ·Î ³Ñ¾î°£°ÍÀ¸·Î Ä¡°í ÇÑ¹ø´õ ·çÇÁ
+				} //ì—†ì„ê²½ìš° ë‹¤ìŒì£¼ë¡œ ë„˜ì–´ê°„ê²ƒìœ¼ë¡œ ì¹˜ê³  í•œë²ˆë” ë£¨í”„
 				
 				if (!fireSearched) {
 					for (int i = 0; i < repeatArr.Length; ++i) {
@@ -366,15 +368,15 @@ namespace UP.Managers {
 		
 			if (fireOnce == -1 || (fireSearched && fireOnce == currentDayOfWeek - 1 )) {
 				//Firedate modifiy not needed but check time
-				//½Ã°£ÀÌ °ú°Å¸é ¾Ë¶÷ Ãß°¡ ¾ÈÇØ¾ßÇÔ + ´ÙÀ½³¯·Î ³Ñ°Ü¾ßµÊ
+				//ì‹œê°„ì´ ê³¼ê±°ë©´ ì•ŒëŒ ì¶”ê°€ ì•ˆí•´ì•¼í•¨ + ë‹¤ìŒë‚ ë¡œ ë„˜ê²¨ì•¼ë¨
 				if (funcDate <= (Calendar.Instance.TimeInMillis / 1000) ) {
-					//°ú°ÅÀÇ ¾Ë¶÷ÀÌ±â ¶§¹®¿¡, ´ÙÀ½³¯·Î ³Ñ°Ü¾ßµÊ!
+					//ê³¼ê±°ì˜ ì•ŒëŒì´ê¸° ë•Œë¬¸ì—, ë‹¤ìŒë‚ ë¡œ ë„˜ê²¨ì•¼ë¨!
 					
-					if (fireOnce == -1) { //¹İº¹ ²¨ÁüÀÎ °æ¿ì ±×³É ´ÙÀ½³¯·Î ³Ñ±è.
+					if (fireOnce == -1) { //ë°˜ë³µ êº¼ì§ì¸ ê²½ìš° ê·¸ëƒ¥ ë‹¤ìŒë‚ ë¡œ ë„˜ê¹€.
 						Log.Debug(UPLog.TAG, "Past alarm!! add 1 day");
 						date.Add(CalendarField.Date, 1);
 					} else {
-						//´ÙÀ½ ¹İº¹ÀÏ±îÁö ´ë±âÈÄ Ãß°¡
+						//ë‹¤ìŒ ë°˜ë³µì¼ê¹Œì§€ ëŒ€ê¸°í›„ ì¶”ê°€
 						if (fireOnce - (currentDayOfWeek - 1) > 0) {
 							fireAfterDay = fireOnce - (currentDayOfWeek - 1);
 							Log.Debug(UPLog.TAG, "(past) Firedate is over today: " + fireAfterDay.ToString());
@@ -406,16 +408,16 @@ namespace UP.Managers {
 		
 			int alarmUUID = alarmID == -1 ? (int) Calendar.Instance.TimeInMillis : alarmID;
 		
-			//// ~~ ¿ø·¡ ÀÌ ºÎºĞ¿¡ Notifi µî·Ï ºÎºĞÀÌ ÀÖ¾ú´Âµ¥,
-			//// ¾Èµå·ÎÀÌµå´Â ¼­ºñ½º·Î Á÷Á¢ ¾Ë¶÷ÀÌ ¿ï·Á¾ß ÇÏ¸é À½¾Ç Àç»ı ¹× °¡´ÉÇÏ¸é ¾×Æ¼ºñÆ¼¸¦ ¶ç¿ì´Â
-			//// ÀÛ¾÷À» ÇÒ °Å±â ¶§¹®¿¡ ¾Ë¶÷ µ¥ÀÌÅÍ¸¸ ÀúÀåµÇ¸é µÊ. (Áï ³ëÆ¼ÇÇ ÇÊ¿ä X)
+			//// ~~ ì›ë˜ ì´ ë¶€ë¶„ì— Notifi ë“±ë¡ ë¶€ë¶„ì´ ìˆì—ˆëŠ”ë°,
+			//// ì•ˆë“œë¡œì´ë“œëŠ” ì„œë¹„ìŠ¤ë¡œ ì§ì ‘ ì•ŒëŒì´ ìš¸ë ¤ì•¼ í•˜ë©´ ìŒì•… ì¬ìƒ ë° ê°€ëŠ¥í•˜ë©´ ì•¡í‹°ë¹„í‹°ë¥¼ ë„ìš°ëŠ”
+			//// ì‘ì—…ì„ í•  ê±°ê¸° ë•Œë¬¸ì— ì•ŒëŒ ë°ì´í„°ë§Œ ì €ì¥ë˜ë©´ ë¨. (ì¦‰ ë…¸í‹°í”¼ í•„ìš” X)
 
 			//Remove seconds
 			date.Set(CalendarField.Second, 0);
 			
 			//Add alarm to system (array) and save to nsdef
 			AlarmElement tmpAlarmEle = new AlarmElement(
-				alarmTitle, gameID, repeatArr, soundFile, (int) date.TimeInMillis /* ¹Ğ¸®¼¼ÄÁµå ±×´ë·Î ÀúÀåÇÔ */,
+				alarmTitle, gameID, repeatArr, soundFile, (int) date.TimeInMillis /* ë°€ë¦¬ì„¸ì»¨ë“œ ê·¸ëŒ€ë¡œ ì €ì¥í•¨ */,
 				isToggled, alarmUUID
 				);
 			
@@ -427,7 +429,7 @@ namespace UP.Managers {
 			}
 		
 			//// TODO!!! 20160421
-			//// ¾Èµå·ÎÀÌµå µ¥ÀÌÅÍ ÀúÀå ÄÚµå¸¦ ³Ö¾î¾ßÇÔ
+			//// ì•ˆë“œë¡œì´ë“œ ë°ì´í„° ì €ì¥ ì½”ë“œë¥¼ ë„£ì–´ì•¼í•¨
 			UPDataManager.SaveDataJObject(UPDataManager.KEY_ALARMS, JsonConvert.SerializeObject(alarmsArray, Formatting.Indented));
 		}
 
